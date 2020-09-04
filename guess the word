@@ -1,0 +1,147 @@
+import random
+from time import  sleep
+
+with open("hangmanfile.txt") as f:
+    words = f.read()
+
+player_name = input("What is your name")
+#function to replace a letter which occurs more than 1 time in the word chosen by computer
+#function to replace a letter which occurs more than 1 time in the word chosen by computer
+def count(list):
+    index_of_word = []
+    for i in range(len(list)):
+
+        if list[i] == player_inp:
+            index_of_word.append(i)
+
+    return index_of_word
+
+def write_score(name):
+    with open(f"{name}.txt", "a") as score_write:
+        score_write.write(score)
+        score_write.write("\n")
+
+def read_score(name):
+    with open(f"{name}.txt") as f:
+        read_score = f.read().splitlines()
+        int_read = list(map(int, read_score))
+        return int_read
+
+
+while True:
+    used = []
+    list_of_words = words.split(', ')
+
+    computer_chose = random.choice(list_of_words).upper()
+    print(computer_chose)
+
+    length_of_word = len(computer_chose)
+
+    blanks = "-" * len(computer_chose)
+    print(f"\n{blanks}")
+
+    chances = length_of_word*2
+    chance = chances
+
+    while chances>0:
+
+        for i in range(10000):
+
+            if blanks == computer_chose:
+                sleep(0.5)
+                print("\n\n\n\n=YOU ARE A LEGEND, YOU WIN THE GAME=")
+                guess_req = chance - chances
+                score = str((length_of_word*10)//guess_req)
+
+                write_score(player_name)
+                list_scores = read_score(player_name)
+                high_score = max(list_scores)
+                print(f"{player_name}'s current score : {score}")
+                print(f"{player_name}'s high score : {high_score}")
+
+
+
+
+                break
+
+            if chances == 0:
+                print("\n\n\n\nUNLUCKY! BETTER LUCK NEXT TIME:)")
+                break
+
+            print("Chances remaining : ", chances)
+
+            player_inp = input("Can you guess the letter : ").upper()
+
+
+            add = used.append(player_inp)
+
+            if not player_inp or player_inp.isnumeric():
+
+                sleep(0.5)
+                print("\n\n\nInvalid Input, please enter an alphabet\n")
+                sleep(0.5)
+                print(f"Word so far : {blanks}")
+                continue
+
+
+
+
+            if player_inp in blanks:
+                sleep(0.5)
+                print("\n\n\nYou have already used that letter")
+                sleep(0.5)
+                print(f"Word so far : {blanks}")
+                continue
+
+            elif player_inp in computer_chose:
+                sleep(0.5)
+                print("\n\n\n\n\n\n\n\n----Awesome! You guessed it right--\n\n")
+                letter_count = computer_chose.count(player_inp)
+                sleep(0.5)
+
+                if letter_count == 1:
+                    letter_find = computer_chose.find(player_inp)
+
+                    blank_new = blanks[:letter_find] + player_inp + blanks[letter_find + 1:]
+                    print(f"\nWord so far : {blank_new}")
+                    print("Used letters : ", used)
+                    blanks = blank_new
+
+                else:
+                    try:
+                        count = count(computer_chose)
+                        count_count1 = count[0]
+                        count_count2 = count[1]
+                    except Exception as e:
+                        pass
+
+                    blank_new1 = blanks[:count_count1] + player_inp + blanks[count_count1 + 1:]
+                    blank_new2 = blank_new1[:count_count2] + player_inp + blank_new1[count_count2 + 1:]
+
+                    print(f"\nWord so far : {blank_new2}")
+                    print("Used letters : ", used)
+                    blanks = blank_new2
+
+
+
+
+
+            else:
+                sleep(0.5)
+                print("\n\n\n\n\n\n\n\nOh! You guessed it wrong, Try Again\n\n")
+                sleep(0.5)
+                # print(f"Chances used : {n}")
+                print(f"Word so far : {blanks}")
+                print("Used letters : ", used)
+
+            chances = chances - 1
+
+        print("Word was : ", computer_chose)
+
+        break
+
+    play_again = input("\n\nDo you want to play again y/n\n").upper()
+    if play_again == "Y":
+        continue
+    else:
+        break
